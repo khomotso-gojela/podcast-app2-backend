@@ -44,12 +44,9 @@ app.post('/newfavorite',async (req,res) => {
 
 // MONGODB
 
-const uri = 'mongodb://localhost:27017/'
-const URI2 = 'mongodb+srv://motso:motso123@mycluster.vjpdmui.mongodb.net/?retryWrites=true&w=majority'
-
 async function dbConnection(func,id,body) {
 
-    const client = new MongoClient(URI2, {monitorCommands: true})
+    const client = new MongoClient(process.env.URI, {monitorCommands: true})
 
     try {
         await client.connect()
@@ -79,7 +76,7 @@ async function getFavorites(client) {
 
 // get show by id
 async function getShow(client,id) {
-    const res = await client.db('mocastdb').collection('shows').findOne({_id:id})
+    const res = await client.db('mocastdb').collection('shows').findOne({id:id})
     return res
 }
 
@@ -87,16 +84,24 @@ async function getShow(client,id) {
 async function updateFav(client,id,obj) {
     const res = await client.db('mocastdb').collection('favorites')
         .updateOne(
-            {_id:id},
+            {id:id},
             {$set:{seasons: obj.seasons}},
             {upsert:true}
             )
     console.log(res,id)
 }
 
+// add new favorite show 
 async function addNewFav(client,obj) {
     const res = await client.db('mocastdb').collection('favorites')
         .insertOne(obj)
+    console.log(res)
+}
+
+// delete favorite
+async function addNewFav(client,obj) {
+    const res = await client.db('mocastdb').collection('favorites')
+        .deleteOne({id:id})
     console.log(res)
 }
 
